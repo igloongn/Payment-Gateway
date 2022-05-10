@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block titie %}
+  Make Payment
+{% endblock titie %}
+{% block content %}
+<div class="container">
+    <div class="d-flex row justify-content-center align-items-center py-md-5 py-3 " style="min-height:90vh">
+            <h5>Make Payment For: NGN {{payment.amount}}</h5>
+            <form class="col-12">
+                <button onclick="payWithPayStack()"  id="django-paystack-button" class="btn btn-success btn-large" type="button" >Make Payment</button>
+            </form>
+        </div>
+    </div>
+    <all>
+        <script src="https://js.paystack.co/v1/inline.js"></script> 
+        <script>
+        let payWithPayStack = ()=> {
+            let currency = 'NGN'
+            let plan = ""
+            let ref = '{{payment.ref}}'
+            let User_details_for_payment = {
+                key:"{{paystack_public_key}}",
+                email:"{{payment.email}}",
+                amount:"{{amount}}",
+                ref:ref,
+                callback: res => window.location.href = "{% url 'verify' payment.ref %}"
+                     //  window.location.href="{% url 'verify' payment.ref %}" 
+            }
+            if(Boolean(currency)){
+                User_details_for_payment.currency = currency.toUpperCase()
+            } 
+            if(Boolean(plan)){
+                User_details_for_payment.plan = plan
+            }
+            var handler = PaystackPop.setup(User_details_for_payment)
+            handler.openIframe()
+
+        }
+    </script>
+</all>
+
+{% endblock content %}
+
